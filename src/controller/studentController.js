@@ -21,25 +21,54 @@ export const findStudent = (req, res) => {
 }
 
 export const deleteStudent = (req, res) => {
-    // TODO remove student
+    const id = +req.params.id;
+    const student = repo.findStudent(id);
+    if(student) {
+        const {password, ...studentWithoutPassword} = student;
+        res.json(studentWithoutPassword);
+        repo.deleteStudent(id)
+    } else {
+        res.status(404).send();
+    }
 }
 
 export const updateStudent = (req, res) => {
-    // TODO update student
+    const id = +req.params.id;
+    const student = repo.findStudent(id);
+    if(student) {
+        repo.updateStudent(id, req.body)
+        const {scores, ...studentWithoutScores} = student;
+        res.json(studentWithoutScores);
+    } else {
+        res.status(404).send();
+    }
 }
 
 export const addScore = (req, res) => {
-    // TODO add score
+    const id = +req.params.id;
+    const student = repo.findStudent(id);
+    if(student) {
+        repo.addScore(id, req.body);
+        res.json(req.body)
+    } else {
+        res.status(404).send();
+    }
 }
 
 export const findStudentsByName = (req, res) => {
-    // TODO find students by name
+    const students = repo.findStudentByName(req.params.name);
+    res.json(students);
 }
 
 export const countByNames = (req, res) => {
-    // TODO count students by names
+    let names = req.query.names;
+    if(!Array.isArray(names)) names = [names];
+    res.json(repo.countByNames(names));
 }
 
 export const findByMinScore = (req, res) => {
-    // TODO find students by min score
+    const exam = req.params.exam;
+    const minScore = req.params.minScore;
+    const students = repo.findByMinScore(exam, minScore);
+    res.json(students);
 }
